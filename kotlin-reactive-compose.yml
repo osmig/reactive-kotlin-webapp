@@ -1,0 +1,12 @@
+version: '2'
+services:
+
+  reactive-app01:
+    image: kotlin-reactive-app
+    ports:
+      - 8082:8080
+
+  reactive-app02:
+    image: kotlin-reactive-app
+    ports:
+      - 8081:8080
