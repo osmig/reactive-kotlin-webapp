@@ -1,12 +1,11 @@
 version: '2'
 services:
-  lb:
-    scale: 1
-    load_balancer_config:
-      name: lb config
-    health_check:
-      port: 42
-      interval: 2000
-      unhealthy_threshold: 3
-      healthy_threshold: 2
-      response_timeout: 2000
+  reactive-lb-01:
+    start_on_create: true
+    lb_config:
+      port_rules:
+      - priority: 1
+        protocol: tcp
+        service: reactive-app01
+        source_port: "${HTTP_PORT}"
+        target_port: 8082
