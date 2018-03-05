@@ -1,7 +1,7 @@
 pipeline {
 
     agent {
-        dockerfile {
+        docker {
             image 'monostream/rancher-compose'
         }
     }
