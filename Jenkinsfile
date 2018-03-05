@@ -2,7 +2,7 @@ pipeline {
 
     agent {
         docker {
-            image 'monostream/rancher-compose'
+            image 'bfosberry/rancher-compose'
         }
     }
 
