@@ -2,7 +2,7 @@ pipeline {
 
     agent {
         docker {
-            image 'bfosberry/rancher-compose'
+            image 'adopteunops/rancher-compose-tools'
         }
     }
 
