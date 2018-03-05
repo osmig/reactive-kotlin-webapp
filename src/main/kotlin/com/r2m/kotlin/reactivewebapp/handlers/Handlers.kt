@@ -23,8 +23,8 @@ private val beers = Flux.just(
 class BeerHandler {
 
   private val beerStream = Flux
-      .interval(Duration.ofMillis(15))
-      .zipWith(beers.repeat())
+      .interval(Duration.ofMillis(100))
+      .zipWith(beers)
       .map { it.t2 }
 
 
