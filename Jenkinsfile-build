@@ -1,35 +1,33 @@
 pipeline {
 
-    environment {
-        privateRepo = '192.168.99.105:8083/r2m/'
-        appName = 'demo-app'
-    }
-
     agent any
 
     tools {
-         gradle "gradle-4.7"
+         gradle 'Gradle 4.7'
     }
 
     stages {
-
         stage('Compile') {
             steps {
                 sh "gradle clean build"
             }
         }
 
-        stage('Build docker image') {
+        stage('Create Dockerfile') {
             steps {
-                sh "docker build -t " + privateRepo + "/" + appName + "."
+                sh "gradle createDockerFile"
             }
         }
-        stage('Publish') {
-            when {
-                branch 'master'
-            }
+
+        stage('Create Dockerimage') {
             steps {
-                sh "docker push " + privateRepo + "/" + appName
+                sh "gradle createDockerImage"
+            }
+        }
+
+        stage('Push Dockerimage') {
+            steps {
+                sh "gradle pushDockerImage"
             }
         }
     }

@@ -1,16 +1,17 @@
 buildscript {
-	ext {
-		kotlinVersion = '1.2.20'
-		springBootVersion = '2.0.0.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
-		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
-	}
+    ext {
+        kotlinVersion = '1.2.20'
+        springBootVersion = '2.0.0.RELEASE'
+    }
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
+        classpath('com.bmuschko:gradle-docker-plugin:3.2.4')
+    }
 }
 
 apply plugin: 'kotlin'
@@ -18,34 +19,73 @@ apply plugin: 'kotlin-spring'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.bmuschko.docker-remote-api'
 
 group = 'com.r2m.kotlin'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 compileKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
-	}
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
 }
 
 compileTestKotlin {
-	kotlinOptions {
-		freeCompilerArgs = ["-Xjsr305=strict"]
-		jvmTarget = "1.8"
-	}
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "1.8"
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-webflux')
-	compile('com.fasterxml.jackson.module:jackson-module-kotlin')
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	compile("org.jetbrains.kotlin:kotlin-reflect")
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('io.projectreactor:reactor-test')
+
+    dockerJava 'org.slf4j:slf4j-simple:1.7.5'
+    dockerJava 'cglib:cglib:3.2.0'
+    dockerJava('com.github.docker-java:docker-java:3.1.0-rc-3')
+
+    compile('org.springframework.boot:spring-boot-starter-webflux')
+    compile('com.fasterxml.jackson.module:jackson-module-kotlin')
+    compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    compile("org.jetbrains.kotlin:kotlin-reflect")
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('io.projectreactor:reactor-test')
 }
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
+import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
+
+docker {
+    registryCredentials {
+        url = 'http:192.168.99.107:8083'
+        username = 'admin'
+        password = 'admin123'
+    }
+}
+
+task createDockerfile(type: Dockerfile) {
+    destFile = file('/var/jenkins_home/workspace/app-ci/build/libs/Dockerfile')
+    from 'openjdk:8-jdk-slim'
+    copyFile('app-ci-0.0.1-SNAPSHOT.jar', '/opt')
+    exposePort 8080
+    entryPoint('/usr/bin/java')
+    defaultCommand('-jar', '/opt/app-ci-0.0.1-SNAPSHOT.jar')
+}
+
+task createDockerImage(type: DockerBuildImage) {
+    inputDir = file('/var/jenkins_home/workspace/app-ci/build/libs/')
+    tags = ['192.168.99.107:8083/demoapp']
+}
+
+task pushDockerImage(type: DockerPushImage) {
+    imageName = '192.168.99.107:8083/demoapp'
+}
+
+docker {}
