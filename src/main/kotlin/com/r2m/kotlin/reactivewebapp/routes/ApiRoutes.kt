@@ -9,22 +9,23 @@ import org.springframework.web.reactive.function.server.router
 @Configuration
 class ApiRoutes(private val beerHandler: BeerHandler) {
 
-    @Bean
-    fun router() = router {
+  @Bean
+  fun router() = router {
 
-        "/rest".nest {
+    "/rest".nest {
 
-            "/beers".nest {
+      "/beers".nest {
 
-                accept(MediaType.APPLICATION_JSON).nest {
-                    GET("", beerHandler::findAll)
-                    GET("/{id}", beerHandler::findOne)
-                }
-
-                accept(MediaType.TEXT_EVENT_STREAM).nest {
-                    GET("", beerHandler::findAllReactive)
-                }
-            }
+        accept(MediaType.APPLICATION_JSON).nest {
+//          POST("", beerHandler::create)
+//          GET("", beerHandler::findAll)
+          GET("/{id}", beerHandler::findOne)
         }
+
+        accept(MediaType.TEXT_EVENT_STREAM).nest {
+          GET("", beerHandler::findAllReactive)
+        }
+      }
     }
+  }
 }
