@@ -379,6 +379,13 @@ def rancherAccessKey = '${ny-genererad-access-key}'
 def rancherSecretKey = '${ny-genererad-secret-key}'
 ```
 
+Sista ändringen behöver göras i filen **kotlin-reactive-compose-single-service.yml**
+
+Byt följande image:
+```
+image: ${rancher-host-ip}:8083/demoapp
+```
+
 Committa ändringarna och pusha till github.
 
 ##### Kör igång CD jobbet
