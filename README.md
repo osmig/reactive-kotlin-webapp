@@ -267,4 +267,42 @@ Se till att konfigurationen ser ut som följande:
 
 
 #### Konfigurera docker-engine för Insecure-Registries
-För denna labben kommer kommunikationen att ske via http, så vi måste lägga till något som kallas **insecure-registries**
+För denna labben kommer kommunikationen att ske via http, så vi måste lägga till något som kallas **insecure-registries** i docker-engine på den hosten som kör jenkins.
+
+Vi behöver använda ssh för accessa den virtuella maskinen. Det kan vi göra med hjälp av docker-machine.
+
+Vi behöver lägga till / modifiera en fil som heter daemon.json som ligger under **/etc/docker** som ska se ut som nedan, fast med ip-adressen för rancher-hosten:
+```
+docker-machine ssh rancher-host
+sudo vi /etc/docker/daemon.json
+```
+```
+{
+  "insecure-registries": [
+    "http://${docker-host-ip}:8083",
+    "http://${docker-host-ip}:8084"
+  ],
+  "disable-legacy-registry": true
+}
+```
+
+för att ändringarna ska gälla krävs omstart av docker. Lättast är att logga ut från vm och sedan starta om maskinen med hjälp av docker-machine:
+```
+docker-machine restart rancher-host
+```
+
+Vänta till vm är uppstartad och alla containrar är igång.
+
+Sedan kan vi logga in på vårt privata nexus-repo från rancher-hosten:
+```
+docker-machine ssh
+docker login -u admin -p admin123 http://${docker-host-ip}:8083
+docker login -u admin -p admin123 http://${docker-host-ip}:8084
+```
+
+Se till att båda returnerar
+```
+Login Succeeded
+```
+
+Nu är Nexus uppsatt och konfigurerat för att publisera egna docker images från vår host!
