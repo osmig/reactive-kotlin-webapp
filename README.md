@@ -254,6 +254,17 @@ Se till att konfigurationen ser ut som följande:
 
 Navigera till **Settings (Kugghjul) -> Repositories -> Create Repository -> docker-proxy**
 
+Se till att konfigurationen ser ut som följande:
+
+![docker-proxy](src/main/resources/images/docker_proxy_config.png?raw=true)
+
+##### Group Repo
+Navigera till **Settings (Kugghjul) -> Repositories -> Create Repository -> docker-group**
+
+Se till att konfigurationen ser ut som följande:
+
+![docker-proxy](src/main/resources/images/docker_group_config.png?raw=true)
+
 
 #### Konfigurera docker-engine för Insecure-Registries
 För denna labben kommer kommunikationen att ske via http, så vi måste lägga till något som kallas **insecure-registries**
