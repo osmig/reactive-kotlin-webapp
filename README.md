@@ -14,7 +14,11 @@ Applikationen är skriven i **Kotlin** och byggs med **Gradle**.
 
 ### Förberedelser
 
-För att kunna genomföra denna labb, krävs 
+För att kunna genomföra denna labb, behövs:
+* Docker
+* VirtualBox
+* git
+* Github-konto
 
 #### Docker CE
 
@@ -78,13 +82,15 @@ För att skapa upp dessa miljöer används **docker-machine**. Det medföljer Do
 **docker-machine** är ett verktyg som låter en snabbt skapa upp flertalet separata docker hostar i virtuella miljöer. 
 Vill du läsa mer om **docker-machine** kan du göra det här: https://github.com/docker/machine
 
+Nedan beskrivs hur vi skapar upp två virtuella maskiner med hjälp av docker-machine.
 
+**OBS: nedan avsätts 4096 MB för varje vm. Justera minnesmängden för vad som passar den hårdvaran som du kör ifrån.**
 
 Öppna upp en ny terminalsession och kör kommandona nedan för att skapa upp vm och sedan ansluta sessionen till dockerhosten i vm:
 ##### Rancher-server
 ```
-docker-machine create -d virtualbox --virtualbox-memory 4096 --virtualbox-boot2docker-url=https://github.com/rancher/os/releases/download/v1.2.0/rancheros.iso rancher
-eval $(docker-machine env rancher)
+docker-machine create -d virtualbox --virtualbox-memory 4096 --virtualbox-boot2docker-url=https://github.com/rancher/os/releases/download/v1.2.0/rancheros.iso rancher-server
+eval $(docker-machine env rancher-server)
 ```
 
 
@@ -95,4 +101,68 @@ docker-machine create -d virtualbox --virtualbox-memory 4096 --virtualbox-boot2d
 eval $(docker-machine env rancher-host)
 ```
 
-Nu kommer 2 virtuella maskiner finnas uppsatta med.
+Nu kommer 2 virtuella maskiner finnas uppsatta baserat på en lättviktig linuxdist med docker förinstallerat.
+
+För att se vilka virtuella maskiner som är uppskapade kör:
+```
+docker-machine ls
+``` 
+och borde få liknande resultat som outputen nedan:
+```
+NAME            ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER        ERRORS
+rancher-server  -        virtualbox   Running   tcp://192.168.99.106:2376           v17.09.1-ce
+rancher-host    -        virtualbox   Running   tcp://192.168.99.107:2376           v17.09.1-ce
+```
+
+### Sätt upp och konfigurera rancher
+
+**Rancher server** kommer att köra i en dockercontainer på den virtuella maskinen som heter **rancher-server**.
+
+Välj den terminalsessionen som är ansluten till **rancher-server** och kör:
+```
+docker run -d --restart=unless-stopped -p 8080:8080 rancher/server
+```
+
+Efter att containern har startat upp exponeras rancher-gui via "http://**${rancher-server-ip}**:8080"
+
+Nästa steg är att lägga till en rancher-host. 
+
+Navigera till **INFRASTRUCTURE -> HOSTS -> ADD HOST**
+
+![Add Host](src/main/resources/images/add_host.png?raw=true)
+
+Följ instruktionerna och kopiera kommandot som genereras (utan sudo).
+
+Kör detta kommando från din terminalsession som är ansluten till rancher-host.
+
+Efter en kort stund borde en ny **host** ha anslutit sig till **rancher-server**.
+
+![Add Host](src/main/resources/images/new_host.png?raw=true)
+
+Nu finns ett kluster uppsatt med en **rancher-server** och en **rancher-host**!
+
+### Satt upp och konfigurera Jenkins
+
+Jenkins kommer att användas för att bygga koden och publicera docker image, samt att deploya docker imagen i rancher.
+
+Jenkins kommer att konfigureras via en **docker-compose** fil som ser ut som följande:
+```yaml
+version: '2'
+   services:
+     jenkins:
+       image: getintodevops/jenkins-withdocker:lts
+       network_mode: bridge
+       ports:
+       - 8081:8080/tcp
+       volumes:
+       - /var/run/docker.sock:/var/run/docker.sock
+
+```
+
+Navigera till **STACKS -> USER -> ADD STACK**.
+
+Nanmge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
+
+![Add Host](src/main/resources/images/add_jenkins.png?raw=true)
+
+
