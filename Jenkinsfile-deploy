@@ -6,6 +6,6 @@ node {
     }
 
     stage ('Deploy') {
-        sh "/var/jenkins_home/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/rancher-compose/rancher-compose-v0.12.5/rancher-compose -url http://192.168.99.106:8080/ --access-key E55D96CC6992FF22F942 --secret-key 8ESocUmoiEMu9kPsjSTRorHR7XuYrDoZdXSJr1cG -file kotlin-reactive-compose-single-service.yml up -d --force-recreate --confirm-upgrade --pull"
+        sh "/var/jenkins_home/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/rancher-compose/rancher-compose-v0.12.5/rancher-compose -url http://192.168.99.106:8080/ --access-key E55D96CC6992FF22F942 --secret-key 8ESocUmoiEMu9kPsjSTRorHR7XuYrDoZdXSJr1cG --project-name demo-app -file kotlin-reactive-compose-single-service.yml up -d --force-recreate --confirm-upgrade --pull"
     }
 }
