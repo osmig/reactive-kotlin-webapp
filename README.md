@@ -137,7 +137,7 @@ Kör detta kommando från din terminalsession som är ansluten till rancher-host
 
 Efter en kort stund borde en ny **host** ha anslutit sig till **rancher-server**.
 
-![Add Host](src/main/resources/images/new_host.png?raw=true)
+![New Host](src/main/resources/images/new_host.png?raw=true)
 
 Nu finns ett kluster uppsatt med en **rancher-server** och en **rancher-host**!
 
@@ -165,7 +165,7 @@ Navigera till **STACKS -> USER -> ADD STACK**.
 
 Nanmge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
 
-![Add Host](src/main/resources/images/add_jenkins.png?raw=true)
+![Add Jenkins Stack](src/main/resources/images/add_jenkins.png?raw=true)
 
 #### Starta Jenkins första gången
 I loggen för Jenkins-containern kan man hitta initiala lösenordet för att starta Jenkins för första gången.
@@ -176,3 +176,35 @@ docker logs -f ${container-id}
 ```
 
 Installera **Suggested Plugins** och skapa sedan en **admin-användare**.
+
+#### Jenkins tools
+
+Jenkins behöver två huvudsakliga verktyg för att kunna köra byggena för detta projekt.
+
+* **Gradle** (för att compilera och hantera docker-images)
+* **rancher-compose** (api för att prata med rancher-server för att kunna deploya applikationen på rätt miljö)
+
+##### Gradle
+För att installera **gradle**, navigera till **Manage Jenkins -> Global Tool Configuration** och se till att det ser ut som nedan och spara inställningarna:
+
+![Install Gradle](src/main/resources/images/global_tools_gradle.png?raw=true)
+
+##### Rancher-compose
+
+Rancher-compose är inte ett standardverktyg i Jenkins så vi måste lägga till det via ett plugin som heter **CustomTools**
+
+Navigera till **Manage Jenkins -> Manage Plugins**. Sök efter CustomTools, installera och starta om Jenkins.
+Navigera till **Manage Jenkins -> Global Tool Configuration** och se till att det ser ut som nedan och spara inställningarna:
+**Viktigt är att länka till binären för rancher-compose:**
+
+
+https://github.com/rancher/rancher-compose/releases/download/v0.12.5/rancher-compose-linux-amd64-v0.12.5.tar.gz
+
+![Install Rancher-Compose](src/main/resources/images/custom_tools_rancher_compose.png?raw=true)
+
+Nu är Jenkins förberett för att köra jobben.
+
+### Sätt upp och konfigurera Nexus
+
+Vi kommer att använda oss av nexus för att lägga upp docker images i ett privat repo
+
