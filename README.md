@@ -307,3 +307,80 @@ Login Succeeded
 ```
 
 Nu är Nexus uppsatt och konfigurerat för att publisera egna docker images från vår host!
+
+### Lägga till jenkins Pipelines
+
+Nu är allt redo för att lägga till våra jenkins-pipelines för att kunna bygga och deploya en applikation.
+
+Applikationen finns i detta repo. Vi kommer att behöva ändra en del parametrar i projektet för att matcha individuella konfigurationer.
+Dessa konfigurationsfiler i projektet kommer att refereras till i jenkins.
+
+#### Github Repo
+
+För att kunna göra anpassade ändringar i projektet:
+
+Forka detta repo, alternativt ladda ner projektet och skapa upp ett nytt github-repo ifrån detta.
+
+#### Nytt Pipeline jobb för CI
+
+Gå till Jenkins GUI, navigera till **New Item** och se till att det ser ut som följande:
+![Add pipeline ci](src/main/resources/images/jenkins_ci_pipeline.png?raw=true)
+
+Länka till url för projektet repo:
+![Add pipeline ci](src/main/resources/images/github_repo_conf.png?raw=true)
+
+Under **Pipeline**, länka till git clone urlen, samt till Jenkinfile-build:
+![Add pipeline ci](src/main/resources/images/pipeline_script_config.png?raw=true)
+
+##### Modifieringar av parametrar i projektet för första ci-pipeline jobbet
+
+I projektet build.gradle finns en variabel som pekar ut det private docker-repot som gradle ska publisera docker-imagen till.
+Byt nedanstående variabel till det uppsatta repots url:
+```
+def privateRepo = '${rancher-host-ip}:8083'
+```
+
+committa ändringarna och pusha till github-repot.
+
+##### Kör igång CI jobbet
+
+Nu kan vi äntligen testa att köra pipeline-jobbet i jenkins.
+Med lite tur så lyckas jobbet pusha en docker image till det private docker-repot.
+
+Om jobbet går grönt, gå till nexus GUI och kontrollera att docker imagen har dykt upp under **docker-hosted**
+
+#### Nytt Pipeline jobb för CD
+
+Nu har jenkins byggt och pushat en docker-image. Nästa steg är att deploya docker imagen i vår rancher-host.
+Vi kommer att lägga till ett nytt jenkins-pipeline jobb för detta.
+
+Gå till Jenkins GUI, navigera till **New Item** och se till att det ser ut som följande:
+![Add pipeline ci](src/main/resources/images/jenkins_cd_pipeline.png?raw=true)
+
+Länka till url för projektet repo:
+![Add pipeline ci](src/main/resources/images/github_repo_conf.png?raw=true)
+
+Under **Pipeline**, länka till git clone urlen, samt till Jenkinsfile-deploy:
+![Add pipeline ci](src/main/resources/images/pipeline_script_deploy_config.png?raw=true)
+
+##### Modifieringar av parametrar i projektet för första cd-pipeline jobbet
+
+I projektet finns en fil som heter Jenkinsfile-deploy. 
+Det är pipeline jobbet som kommer att provisionera ut vår applikation med hjälp av rancher.
+
+För att sätta rätt värde på variablerna i filen behöver vi först se till att vi skapar upp api-credentials i vår rancher-server.
+Gå till Rancher GUI och Navigera till **API -> ADVANCED OPTIONS -> ADD ENVIRONMENT KEY** och namnge nyckeln.
+
+det kommer att genereras en Access Key och en Secret Key. kopiera dessa parametrar och ersätt variblerna i Jenkins-deploy.
+```
+def rancherServerUrl = 'http://${rancher-server-ip}:8080/'
+def rancherAccessKey = '${ny-genererad-access-key}'
+def rancherSecretKey = '${ny-genererad-secret-key}'
+```
+
+Committa ändringarna och pusha till github.
+
+##### Kör igång CD jobbet
+
+Nu kan vi testa att köra pipeline-jobbet i jenkins.
+Lyckas jobbet,  gå till rancher GUI och kontrollera att vår applikation har blivit deplpoyad i som en ny stack i rancher.
