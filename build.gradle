@@ -62,9 +62,11 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 
+def privateRepo = '192.168.99.107:8083'
+
 docker {
     registryCredentials {
-        url = 'http:192.168.99.107:8083'
+        url = 'http//:' + privateRepo
         username = 'admin'
         password = 'admin123'
     }
@@ -81,11 +83,11 @@ task createDockerfile(type: Dockerfile) {
 
 task createDockerImage(type: DockerBuildImage) {
     inputDir = file('/var/jenkins_home/workspace/app-ci/build/libs/')
-    tags = ['192.168.99.107:8083/demoapp']
+    tags = [privateRepo + '/demoapp']
 }
 
 task pushDockerImage(type: DockerPushImage) {
-    imageName = '192.168.99.107:8083/demoapp'
+    imageName = privateRepo + '/demoapp'
 }
 
 docker {}

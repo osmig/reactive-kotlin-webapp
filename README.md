@@ -145,6 +145,8 @@ Nu finns ett kluster uppsatt med en **rancher-server** och en **rancher-host**!
 
 Jenkins kommer att användas för att bygga koden och publicera docker image, samt att deploya docker imagen i rancher.
 
+
+#### Lägg till Jenkins
 Jenkins kommer att konfigureras via en **docker-compose** fil som ser ut som följande:
 ```yaml
 version: '2'
@@ -165,4 +167,12 @@ Nanmge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan 
 
 ![Add Host](src/main/resources/images/add_jenkins.png?raw=true)
 
+#### Starta Jenkins första gången
+I loggen för Jenkins-containern kan man hitta initiala lösenordet för att starta Jenkins för första gången.
 
+För att läsa loggen av en container, lista alla körande containers (docker ps) och kör följande i **rancer-host**
+```
+docker logs -f ${container-id}
+```
+
+Installera **Suggested Plugins** och skapa sedan en **admin-användare**.
