@@ -141,14 +141,14 @@ Efter en kort stund borde en ny **host** ha anslutit sig till **rancher-server**
 
 Nu finns ett kluster uppsatt med en **rancher-server** och en **rancher-host**!
 
-### Satt upp och konfigurera Jenkins
+### Sätt upp och konfigurera Jenkins
 
 Jenkins kommer att användas för att bygga koden och publicera docker image, samt att deploya docker imagen i rancher.
 
 
 #### Lägg till Jenkins
 Jenkins kommer att konfigureras via en **docker-compose** fil som ser ut som följande:
-```yaml
+```
 version: '2'
    services:
      jenkins:
@@ -166,6 +166,8 @@ Navigera till **STACKS -> USER -> ADD STACK**.
 Nanmge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
 
 ![Add Jenkins Stack](src/main/resources/images/add_jenkins.png?raw=true)
+
+När containern har startat upp kan man komma åt jenkins GUI via: "http://**${rancher-host-ip}**:8081"
 
 #### Starta Jenkins första gången
 I loggen för Jenkins-containern kan man hitta initiala lösenordet för att starta Jenkins för första gången.
@@ -208,3 +210,50 @@ Nu är Jenkins förberett för att köra jobben.
 
 Vi kommer att använda oss av nexus för att lägga upp docker images i ett privat repo
 
+#### Lägg till Nexus
+På samma sätt som vi lade till Jenkins kommer vi nu att lägga till Nexus i rancher med hjälp av en docker-compose fil:
+```
+version: '2'
+services:
+  nexus:
+    image: sonatype/nexus3
+    network_mode: bridge
+    volumes:
+      - "nexus-data:/nexus-data"
+    ports:
+      - "8082:8081"
+      - "8083:8083"
+      - "8084:8084"
+```
+
+Gå till Rancher-server-gui och navigera till **STACKS -> USER -> ADD STACK**.
+
+Nanmge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
+
+![Add Nexus](src/main/resources/images/add_nexus.png?raw=true)
+
+När containern har startat upp kan man komma åt nexus GUI via: "http://**${rancher-host-ip}**:8082"
+
+
+#### Konfigurera Nexus
+
+Vi kommer att skapa upp tre stycken docker-repon i nexus:
+* **hosted:**  privat repo för de docker Images vi vill lagra i nexus
+* **proxy:** ett repo som agerar proxy mot dockerhub för att hämta public images.
+* **group:** ett repo som samlar de två ovanstående under en url.
+
+##### Private Repo
+
+Logga in i nexus med (admin/admin123) och navigera till **Settings (Kugghjul) -> Repositories -> Create Repository -> docker-hosted**
+
+Se till att konfigurationen ser ut som följande:
+
+![docker-hosted](src/main/resources/images/docker_hosted_conf.png?raw=true)
+
+##### Proxy Repo
+
+Navigera till **Settings (Kugghjul) -> Repositories -> Create Repository -> docker-proxy**
+
+
+#### Konfigurera docker-engine för Insecure-Registries
+För denna labben kommer kommunikationen att ske via http, så vi måste lägga till något som kallas **insecure-registries**
