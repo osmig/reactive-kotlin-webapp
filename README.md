@@ -164,7 +164,7 @@ version: '2'
 
 Navigera till **STACKS -> USER -> ADD STACK**.
 
-Nanmge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
+Namnge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
 
 ![Add Jenkins Stack](src/main/resources/images/add_jenkins.png?raw=true)
 
@@ -229,7 +229,7 @@ services:
 
 Gå till Rancher-server-gui och navigera till **STACKS -> USER -> ADD STACK**.
 
-Nanmge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
+Namnge stacken och klistra in **docker-compose** filen i textboxen. Tryck sedan på **CREATE**
 
 ![Add Nexus](src/main/resources/images/add_nexus.png?raw=true)
 
