@@ -271,7 +271,8 @@ För denna labben kommer kommunikationen att ske via http, så vi måste lägga 
 
 Vi behöver använda ssh för accessa den virtuella maskinen. Det kan vi göra med hjälp av docker-machine.
 
-Vi behöver lägga till / modifiera en fil som heter daemon.json som ligger under **/etc/docker** som ska se ut som nedan, fast med ip-adressen för rancher-hosten:
+Vi behöver lägga till / modifiera en fil som heter daemon.json som ligger under **/etc/docker** som ska se ut som nedan, 
+**fast med ip-adressen för rancher-hosten:**
 ```
 docker-machine ssh rancher-host
 sudo vi /etc/docker/daemon.json
@@ -295,7 +296,7 @@ Vänta till vm är uppstartad och alla containrar är igång.
 
 Sedan kan vi logga in på vårt privata nexus-repo från rancher-hosten:
 ```
-docker-machine ssh
+docker-machine ssh rancher-host
 docker login -u admin -p admin123 http://${docker-host-ip}:8083
 docker login -u admin -p admin123 http://${docker-host-ip}:8084
 ```
