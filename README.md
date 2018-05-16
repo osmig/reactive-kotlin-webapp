@@ -371,7 +371,7 @@ Det är pipeline jobbet som kommer att provisionera ut vår applikation med hjä
 För att sätta rätt värde på variablerna i filen behöver vi först se till att vi skapar upp api-credentials i vår rancher-server.
 Gå till Rancher GUI och Navigera till **API -> ADVANCED OPTIONS -> ADD ENVIRONMENT KEY** och namnge nyckeln.
 
-det kommer att genereras en Access Key och en Secret Key. kopiera dessa parametrar och ersätt variblerna i Jenkins-deploy.
+det kommer att genereras en Access Key och en Secret Key. kopiera dessa parametrar och ersätt variblerna i Jenkinsfile-deploy.
 ```
 def rancherServerUrl = 'http://${rancher-server-ip}:8080/'
 def rancherAccessKey = '${ny-genererad-access-key}'
