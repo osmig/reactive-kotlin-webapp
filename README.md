@@ -158,6 +158,7 @@ version: '2'
        - 8081:8080/tcp
        volumes:
        - /var/run/docker.sock:/var/run/docker.sock
+       - /home/docker/jenkins_home:/var/jenkins_home/
 
 ```
 
