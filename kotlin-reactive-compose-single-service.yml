@@ -2,6 +2,6 @@ version: '2'
 services:
 
   reactive-app:
-    image: 192.168.99.107:8083/demoapp
+    image: 192.168.99.101:8083/demoapp
     ports:
       - 8085:8080
