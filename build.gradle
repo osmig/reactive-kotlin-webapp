@@ -62,7 +62,7 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import com.bmuschko.gradle.docker.tasks.image.DockerPushImage
 
-def privateRepo = '192.168.99.107:8083'
+def privateRepo = '192.168.99.101:8083'
 
 docker {
     registryCredentials {
