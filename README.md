@@ -1,5 +1,7 @@
 ## Rancher-CICD-labb
 
+**Slides inför labben finns här: https://docs.google.com/presentation/d/1zZRw4TJNE-1OlxU2xOL86M9pORpOw95fWPH8wh7CqcM/edit?usp=sharing**
+
 Rancher är ett container-management system som har som uppdrag att managera och orkestrera docker-baserade applikationer.
 
 Denna labb går ut på att lära sig att sätta upp ett Rancherkluster i virtuella miljöer, samt bygga och deploya en simpel spring-boot applikation.
