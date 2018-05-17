@@ -152,8 +152,8 @@ Jenkins kommer att användas för att bygga koden och publicera docker image, sa
 Jenkins kommer att konfigureras via en **docker-compose** fil som ser ut som följande:
 ```
 version: '2'
-   services:
-     jenkins:
+services:
+    jenkins:
        image: getintodevops/jenkins-withdocker:lts
        network_mode: bridge
        ports:
@@ -161,7 +161,6 @@ version: '2'
        volumes:
        - /var/run/docker.sock:/var/run/docker.sock
        - /home/docker/jenkins_home:/var/jenkins_home/
-
 ```
 
 Navigera till **STACKS -> USER -> ADD STACK**.
